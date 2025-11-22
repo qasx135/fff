@@ -36,3 +36,7 @@ func Save(key string, value interface{}, exp time.Duration) {
 func Get(key string) (string, error) {
 	return redisClient.Get(ctx, redisPrefix+key).Result()
 }
+func HealthCheck() error {
+	_, err := redisClient.Ping(ctx).Result()
+	return err
+}

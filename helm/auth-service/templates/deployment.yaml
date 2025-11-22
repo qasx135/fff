@@ -24,6 +24,8 @@ spec:
               value: "{{ .Values.env.JWT_SECRET }}"
             - name: REDIS_ADDR
               value: "{{ .Values.env.REDIS_ADDR }}"
+            - name: GELF_ENDPOINT
+              value: "{{ .Values.env.GELF_ENDPOINT }}"
           resources: {{- toYaml .Values.resources | nindent 10 }}
           livenessProbe:
             httpGet:
