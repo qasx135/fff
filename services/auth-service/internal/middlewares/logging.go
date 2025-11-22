@@ -2,7 +2,8 @@ package middlewares
 
 import (
 	"auth-service/internal/logger"
-	"time"
+	"fmt"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/Graylog2/go-gelf.v2/gelf"
@@ -10,27 +11,21 @@ import (
 
 func GelfLoggerMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		startTime := time.Now()
-		ctx.Next()
-		endTime := time.Now()
-		latencyTime := endTime.Sub(startTime).Milliseconds()
-		reqMethod := ctx.Request.Method
-		reqUri := ctx.Request.RequestURI
-		statusCode := ctx.Writer.Status()
-		clientIP := ctx.ClientIP()
-		logger.WriteMessage(
+		if err := logger.WriteMessage(
 			&gelf.Message{
-				Host:     "API",
-				Short:    reqMethod,
-				TimeUnix: float64(endTime.Unix()),
-				Extra: map[string]any{
-					"_reqUri":   reqUri,
-					"_clientIP": clientIP,
-					"_status":   statusCode,
-					"_latency":  latencyTime,
+				Version: "1.0",
+				Level:   gelf.LOG_INFO,
+				Short:   fmt.Sprintf("%s %s", ctx.Request.Method, ctx.Request.URL.Path),
+				Extra: map[string]interface{}{
+					"method": ctx.Request.Method,
+					"path":   ctx.Request.URL.Path,
+					"ip":     ctx.ClientIP(),
+					"ua":     ctx.Request.UserAgent(),
 				},
 			},
-		)
+		); err != nil {
+			log.Printf("Ошибка отправки в грэйлог: %v", err)
+		}
 
 		ctx.Next()
 	}

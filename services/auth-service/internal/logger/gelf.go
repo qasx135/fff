@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	gelfLogger        gelf.Writer
+	gelfLogger        *gelf.UDPWriter
 	gelfWriterAddress = "graylog:12201"
 )
 
@@ -17,10 +17,11 @@ func InitGelfLogger() error {
 	}
 	var err error
 	gelfLogger, err = gelf.NewUDPWriter(gelfWriterAddress)
+	gelfLogger.Facility = "auth-service"
 
 	return err
 }
 
-func WriteMessage(message *gelf.Message) {
-	gelfLogger.WriteMessage(message)
+func WriteMessage(message *gelf.Message) error {
+	return gelfLogger.WriteMessage(message)
 }
