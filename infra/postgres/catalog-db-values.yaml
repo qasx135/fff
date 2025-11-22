@@ -1,0 +1,26 @@
+auth:
+  postgresPassword: "catalog_admin"
+  username: "catalog_user"
+  password: "catalog_pass"
+  database: "catalog_db"
+primary:
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
+  initdbScripts:
+    create_monitoring_user.sql: |
+      CREATE USER prometheus WITH PASSWORD 'prom_pass';
+      GRANT pg_monitor TO prometheus;
+  extendedConfiguration: |
+    max_connections = 100
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true

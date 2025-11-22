@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: watch-service
+  labels:
+    app: auth-service
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: watch-service
+  template:
+    metadata:
+      labels:
+        app: watch-service
+    spec:
+      containers:
+        - name: watch
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JWT_SECRET
+              value: "{{ .Values.env.JWT_SECRET }}"
+            - name: REDIS_ADDR
+              value: "{{ .Values.env.REDIS_ADDR }}"
+          resources: {{- toYaml .Values.resources | nindent 10 }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path }}
+              port: 8080
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path }}
+              port: 8080
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.probes.startup.path }}
+              port: 8080
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+          terminationMessagePolicy: File
+          terminationMessagePath: /dev/termination-log
+      restartPolicy: Always

@@ -1,0 +1,14 @@
+replicaCount: 2
+image:
+  repository: watch-service
+  tag: "latest"
+service:
+  port: 8080
+resources: { /* как выше */ }
+autoscaling: { /* как выше */ }
+env:
+  DB_DSN: "host=watch-db-postgresql user=watch_user password=watch_pass dbname=watch_db port=5432 sslmode=disable"
+probes:
+  liveness: { path: /healthz, initialDelaySeconds: 5 }
+  readiness: { path: /ready, initialDelaySeconds: 3 }
+  startup: { path: /startup, initialDelaySeconds: 10 }

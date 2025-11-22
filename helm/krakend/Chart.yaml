@@ -1,0 +1,6 @@
+apiVersion: v2
+name: krakend
+description: API Gateway for Anime Platform
+type: application
+version: 0.1.0
+appVersion: "2.4"

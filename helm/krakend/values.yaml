@@ -1,0 +1,18 @@
+image:
+  repository: devopsfaith/krakend
+  tag: "2.4"
+
+service:
+  port: 8080
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "256Mi"
+    cpu: "200m"
+
+ingress:
+  enabled: true
+  host: anime.local

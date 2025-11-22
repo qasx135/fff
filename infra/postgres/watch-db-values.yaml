@@ -1,0 +1,20 @@
+auth:
+  postgresPassword: "watch_admin"
+  username: "watch_user"
+  password: "watch_pass"
+  database: "watch_db"
+primary:
+  persistence:
+    enabled: true
+    size: 2Gi
+  resources: { /* как выше */ }
+  initdbScripts:
+    create_monitoring_user.sql: |
+      CREATE USER prometheus WITH PASSWORD 'prom_pass';
+      GRANT pg_monitor TO prometheus;
+  extendedConfiguration: |
+    max_connections = 100
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
