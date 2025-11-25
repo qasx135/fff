@@ -31,9 +31,13 @@ kubectl create namespace observability --dry-run=client -o yaml | kubectl apply 
 kubectl apply -f infra/jaeger.yaml
 
 echo "⛵ [7/8] Сборка и установка ваших сервисов..."
-docker build -t auth-service ./services/auth-service
-docker build -t catalog-service ./services/catalog-service
-docker build -t watch-service ./services/watch-service
+docker build -t kostuwan/auth-service:latest ./services/auth-service
+docker build -t kostuwan/catalog-service:latest ./services/catalog-service
+docker build -t kostuwan/watch-service:latest ./services/watch-service
+
+docker push kostuwan/auth-service:latest
+docker push kostuwan/catalog-service:latest
+docker push kostuwan/watch-service:latest
 
 helm upgrade --install auth ./helm/auth-service
 helm upgrade --install catalog ./helm/catalog-service

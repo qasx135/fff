@@ -17,3 +17,4 @@ spec:
                 name: krakend
                 port:
                   number: 8080
+{{- end }}

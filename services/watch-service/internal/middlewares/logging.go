@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"auth-service/internal/logger"
+	"watch-service/internal/logger"
 	"fmt"
 	"log"
 

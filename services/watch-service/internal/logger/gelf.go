@@ -11,9 +11,8 @@ var (
 )
 
 func InitGelfLogger(endpoint string) {
-	var err error
-	gelfLogger, err = gelf.NewUDPWriter(endpoint)
-	gelfLogger.Facility = "auth-service"
+	gelfLogger, err := gelf.NewUDPWriter(endpoint)
+	gelfLogger.Facility = "watch-service"
 
 	if err != nil {
 		log.Fatal("Graylog недоступен:", err)

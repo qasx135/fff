@@ -1,43 +1,39 @@
 package utils
 
 import (
-	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-const (
-	accessTokenExp  = 15 * time.Minute
-	refreshTokenExp = 7 * 24 * time.Hour
-)
-
-var jwtSecret []byte
-
-func InitSecret() {
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "anime-platform-dev-secret-12345" // ← для демо
-	}
-	jwtSecret = []byte(secret)
+type JwtManager struct {
+	accessTokenExp  time.Duration
+	refreshTokenExp time.Duration
+	jwtSecret       []byte
 }
 
-func SignAccessToken(username string) (string, error) {
+func (m *JwtManager) InitSecret(secret string, accessTokenExpipartion time.Duration, refreshTokenExpiration time.Duration) {
+	m.jwtSecret = []byte(secret)
+	m.accessTokenExp = accessTokenExpipartion
+	m.refreshTokenExp = refreshTokenExpiration
+}
+
+func (m *JwtManager) SignAccessToken(username string) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": username,
-		"exp": time.Now().Add(accessTokenExp).Unix(),
+		"exp": time.Now().Add(m.accessTokenExp).Unix(),
 		"aud": "anime-platform",
-	}).SignedString(jwtSecret)
+	}).SignedString(m.jwtSecret)
 }
 
-func SignRefreshToken(username string) (string, error) {
+func (m *JwtManager) SignRefreshToken(username string) (string, error) {
 	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": username,
-		"exp": time.Now().Add(refreshTokenExp).Unix(),
+		"exp": time.Now().Add(m.refreshTokenExp).Unix(),
 		"aud": "anime-platform",
-	}).SignedString(jwtSecret)
+	}).SignedString(m.jwtSecret)
 }
 
-func GetRefreshTokenExp() time.Duration {
-	return refreshTokenExp
+func (m *JwtManager) GetRefreshTokenExp() time.Duration {
+	return m.refreshTokenExp
 }

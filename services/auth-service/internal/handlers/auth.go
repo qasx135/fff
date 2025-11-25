@@ -7,7 +7,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func Login(c *gin.Context) {
+type AuthHandler struct {
+	SignManager *utils.JwtManager
+}
+
+func (h *AuthHandler) Login(c *gin.Context) {
 	username := c.PostForm("username")
 	if username == "" {
 		c.JSON(400, gin.H{"error": "username required"})
@@ -15,19 +19,19 @@ func Login(c *gin.Context) {
 	}
 
 	// Access token (HS256)
-	accessToken, err := utils.SignAccessToken(username)
+	accessToken, err := h.SignManager.SignAccessToken(username)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "token signing failed"})
 		return
 	}
 
 	// Refresh token (просто случайная строка или тоже JWT — здесь упрощённо как строка)
-	refreshToken, err := utils.SignRefreshToken(username)
+	refreshToken, err := h.SignManager.SignRefreshToken(username)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "token signing failed"})
 		return
 	}
-	databases.Save(username, refreshToken, utils.GetRefreshTokenExp())
+	databases.Save(username, refreshToken, h.SignManager.GetRefreshTokenExp())
 
 	c.JSON(200, gin.H{
 		"access_token":  accessToken,
@@ -35,8 +39,7 @@ func Login(c *gin.Context) {
 	})
 }
 
-
-func Refresh(c *gin.Context) {
+func (h *AuthHandler) Refresh(c *gin.Context) {
 	oldRT := c.PostForm("refresh_token")
 	username := c.PostForm("username") // добавим явно для простоты
 	if oldRT == "" || username == "" {
@@ -50,7 +53,7 @@ func Refresh(c *gin.Context) {
 	}
 
 	// Выдаём новый access token
-	accessToken, err := utils.SignAccessToken(username)
+	accessToken, err := h.SignManager.SignAccessToken(username)
 	if err != nil {
 		c.JSON(500, gin.H{"error": "token signing failed"})
 		return

@@ -1,8 +1,8 @@
 replicaCount: 2
 
 image:
-  repository: auth-service
-  tag: "latest"
+  repository: kostuwan/auth-service
+  tag: latest
 
 service:
   port: 8080
@@ -24,6 +24,8 @@ autoscaling:
 env:
   JWT_SECRET: "anime-platform-dev-secret-12345"
   REDIS_ADDR: "redis-master:6379"
+  GRAYLOG_ENDPOINT: "graylog:12201"
+  
 
 probes:
   liveness:

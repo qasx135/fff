@@ -3,7 +3,6 @@ package databases
 import (
 	"context"
 	"log"
-	"os"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -16,11 +15,7 @@ var (
 
 const redisPrefix = "refresh:"
 
-func InitRedis() {
-	redisAddr := os.Getenv("REDIS_ADDR")
-	if redisAddr == "" {
-		redisAddr = "redis-master:6379"
-	}
+func InitRedis(redisAddr string) {
 	redisClient = redis.NewClient(&redis.Options{Addr: redisAddr})
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
@@ -29,7 +24,7 @@ func InitRedis() {
 	}
 }
 
-func Save(key string, value interface{}, exp time.Duration) {
+func Save(key string, value any, exp time.Duration) {
 	redisClient.Set(ctx, redisPrefix+key, value, exp)
 }
 
@@ -37,6 +32,5 @@ func Get(key string) (string, error) {
 	return redisClient.Get(ctx, redisPrefix+key).Result()
 }
 func HealthCheck() error {
-	_, err := redisClient.Ping(ctx).Result()
-	return err
+	return redisClient.Ping(ctx).Err()
 }
