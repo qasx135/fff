@@ -18,7 +18,7 @@ helm upgrade --install redis oci://registry-1.docker.io/bitnamicharts/redis --se
 helm upgrade --install kafka oci://registry-1.docker.io/bitnamicharts/kafka
 helm upgrade --install catalog-db oci://registry-1.docker.io/bitnamicharts/postgresql -f infra/postgres/catalog-db-values.yaml
 helm upgrade --install watch-db oci://registry-1.docker.io/bitnamicharts/postgresql -f infra/postgres/watch-db-values.yaml
-
+helm upgrade --install mongodb oci://registry-1.docker.io/bitnamicharts/mongodb --set auth.enabled=false --set persistence.size=1Gi --set service.port=27017
 echo "📦 [4/8] Установка Graylog через манифест..."
 kubectl apply -f infra/graylog.yaml
 
