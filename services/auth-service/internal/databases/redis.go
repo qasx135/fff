@@ -10,7 +10,6 @@ import (
 
 var (
 	redisClient *redis.Client
-	ctx         = context.Background()
 )
 
 const redisPrefix = "refresh:"
@@ -25,12 +24,12 @@ func InitRedis(redisAddr string) {
 }
 
 func Save(key string, value any, exp time.Duration) {
-	redisClient.Set(ctx, redisPrefix+key, value, exp)
+	redisClient.Set(context.Background(), redisPrefix+key, value, exp)
 }
 
 func Get(key string) (string, error) {
-	return redisClient.Get(ctx, redisPrefix+key).Result()
+	return redisClient.Get(context.Background(), redisPrefix+key).Result()
 }
 func HealthCheck() error {
-	return redisClient.Ping(ctx).Err()
+	return redisClient.Ping(context.Background()).Err()
 }

@@ -6,16 +6,20 @@ import (
 	"auth-service/internal/logger"
 	"auth-service/internal/middlewares"
 	"auth-service/internal/utils"
+	"context"
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/uptrace/uptrace-go/uptrace"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func main() {
 	config := utils.Load()
 	logger.InitGelfLogger(config.GelfEndpoint)
 	defer logger.Close()
-
+	uptrace.ConfigureOpentelemetry()
+	defer uptrace.Shutdown(context.Background())
 	databases.InitRedis(config.RedisAddr)
 	secretManager := &utils.JwtManager{}
 	secretManager.InitSecret(config.JWTSecret, config.AccessTokenExp, config.RefreshTokenExp)
@@ -24,6 +28,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middlewares.GelfLoggerMiddleware())
+	r.Use(otelgin.Middleware("auth-service"))
 
 	r.POST("/login", authHandler.Login)
 	r.POST("/refresh", authHandler.Refresh)

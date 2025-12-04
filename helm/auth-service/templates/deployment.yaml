@@ -26,21 +26,23 @@ spec:
               value: "{{ .Values.env.REDIS_ADDR }}"
             - name: GELF_ENDPOINT
               value: "{{ .Values.env.GELF_ENDPOINT }}"
-          resources: {{- toYaml .Values.resources | nindent 10 }}
+            - name: GIN_MODE
+              value: "release"
+          resources: {{- toYaml .Values.resources | nindent 12 }}
           livenessProbe:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
-              port: 8080
+              port: {{ .Values.service.main.targetPort }}
             initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
           readinessProbe:
             httpGet:
               path: {{ .Values.probes.readiness.path }}
-              port: 8080
+              port: {{ .Values.service.main.targetPort }}
             initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
           startupProbe:
             httpGet:
               path: {{ .Values.probes.startup.path }}
-              port: 8080
+              port: {{ .Values.service.main.targetPort }}
             initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
           terminationMessagePolicy: File
           terminationMessagePath: /dev/termination-log

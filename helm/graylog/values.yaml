@@ -1,0 +1,58 @@
+replicaCount: 1
+
+image:
+  repository: graylog/graylog
+  tag: "5.1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 9000
+  gelfPort: 12201
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 1024Mi
+  requests:
+    cpu: 150m
+    memory: 512Mi
+
+mongodb:
+  host: mongodb
+  port: 27017
+
+elasticsearch:
+  host: elasticsearch-service
+  port: 9200
+
+env:
+  GRAYLOG_PASSWORD_SECRET: "somepasswordpepper"
+  GRAYLOG_ROOT_PASSWORD_SHA2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918" # admin
+  GRAYLOG_HTTP_EXTERNAL_URI: "http://localhost:9000/"
+  GRAYLOG_ELASTICSEARCH_HOSTS: "http://elasticsearch-service:9200"
+  GRAYLOG_MONGODB_URI: "mongodb://mongodb:27017/graylog"
+
+probes:
+  liveness:
+    initialDelaySeconds: 90
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 60
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  startup:
+    initialDelaySeconds: 120
+    periodSeconds: 30
+    timeoutSeconds: 10
+    failureThreshold: 10
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 60

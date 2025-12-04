@@ -13,11 +13,11 @@ var (
 func InitGelfLogger(endpoint string) {
 	var err error
 	gelfLogger, err = gelf.NewUDPWriter(endpoint)
-	gelfLogger.Facility = "auth-service"
-
-	if err != nil {
+	if err != nil || gelfLogger == nil {
 		log.Fatal("Graylog недоступен:", err)
 	}
+	gelfLogger.Facility = "auth-service"
+
 }
 
 func WriteMessage(message *gelf.Message) error {
