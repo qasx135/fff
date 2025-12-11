@@ -6,7 +6,6 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-
 type JwtManager struct {
 	jwtSecret []byte
 }
@@ -37,10 +36,11 @@ func (m *JwtManager) ValidateJWT(tokenString string) (string, error) {
 		return "", err
 	}
 
-	if token.Valid {
-		// The claims are already populated in the 'claims' variable
-		return claims.Subject, nil
+	rc, ok := token.Claims.(*jwt.RegisteredClaims)
+	if !ok {
+		return "", errors.New("invalid claims type")
 	}
 
-	return "", errors.New("invalid token")
+	// The claims are already populated in the 'claims' variable
+	return rc.Subject, nil
 }

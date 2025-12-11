@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: kostuwan/auth-service
-  tag: v11
+  tag: v13
 
 service:
   main:
