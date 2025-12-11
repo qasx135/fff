@@ -1,0 +1,63 @@
+{
+  "$schema": "https://www.krakend.io/schema/v3.json",
+  "version": 3,
+  "name": "Anime API Gateway",
+  "port": 8088,
+  "endpoints": [
+    {
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/login",
+          "host": ["http://auth-service:8080"],
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/auth/refresh",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/refresh",
+          "method": "POST",
+          "host": ["http://auth-service:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/catalog",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/anime",
+          "method": "GET",
+          "host": ["http://catalog-service:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/catalog/{id}",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/api/anime/{id}",
+          "method": "GET",
+          "host": ["http://catalog-service:8080"]
+        }
+      ]
+    },
+    {
+      "endpoint": "/watch",
+      "method": "POST",
+      "backend": [
+        {
+          "url_pattern": "/api/watch",
+          "method": "POST",
+          "host": ["http://catalog-service:8080"]
+        }
+      ]
+    }
+  ]
+}

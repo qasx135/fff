@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -27,13 +28,13 @@ func AuthMiddleware(jwtManager *utils.JwtManager) gin.HandlerFunc {
 
 		userID, err := jwtManager.ValidateJWT(tokenString)
 		if err != nil {
+			log.Printf("INVALID TOKEN: %s", err)
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
-		c.Set("username", userID)
+		c.Set("username", userID)x
 		c.Next()
 	}
 }
-

@@ -1,18 +1,42 @@
+replicaCount: 1
+
 image:
   repository: devopsfaith/krakend
-  tag: "2.4"
+  pullPolicy: IfNotPresent
+  tag: "2.6"
 
 service:
-  port: 8080
+  type: LoadBalancer
+  port: 8088
 
 resources:
-  requests:
-    memory: "128Mi"
-    cpu: "100m"
   limits:
-    memory: "256Mi"
-    cpu: "200m"
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 150m
+    memory: 256Mi
 
-ingress:
+probes:
+  liveness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  startup:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+
+autoscaling:
   enabled: true
-  host: anime.local
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 60

@@ -19,18 +19,18 @@ func (m *JwtManager) InitSecret(secret string, accessTokenExpipartion time.Durat
 }
 
 func (m *JwtManager) SignAccessToken(username string) (string, error) {
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": username,
-		"exp": time.Now().Add(m.accessTokenExp).Unix(),
-		"aud": "anime-platform",
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   username,
+		Audience:  []string{"anime-platform"},
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(m.accessTokenExp)),
 	}).SignedString(m.jwtSecret)
 }
 
 func (m *JwtManager) SignRefreshToken(username string) (string, error) {
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": username,
-		"exp": time.Now().Add(m.refreshTokenExp).Unix(),
-		"aud": "anime-platform",
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Subject:   username,
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(m.refreshTokenExp)),
+		Audience:  []string{"anime-platform"},
 	}).SignedString(m.jwtSecret)
 }
 
