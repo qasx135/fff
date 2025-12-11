@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: prometheuscommunity/postgres-exporter
-  tag: "v0.14.0"
+  tag: "v0.18.1"
   pullPolicy: IfNotPresent
 app:
   name: service-name

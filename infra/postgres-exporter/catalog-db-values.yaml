@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: prometheuscommunity/postgres-exporter
-  tag: "v0.14.0"
+  tag: "v0.18.1"
   pullPolicy: IfNotPresent
 
 app:
@@ -19,14 +19,6 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
-postgresql:
-  host: catalog-db-postgresql
-  port: 5432
-  database: catalog_db
-  username: prometheus
-  password: prom_pass
-  sslmode: disable
 
 env:
   DATA_SOURCE_NAME: "postgresql://prometheus:prom_pass@catalog-db-postgresql:5432/catalog_db?sslmode=disable"

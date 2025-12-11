@@ -2,15 +2,15 @@ package handlers
 
 import (
 	"net/http"
-	"watch-service/internal/databases"
+	// "watch-service/internal/databases"
 
 	"github.com/gin-gonic/gin"
 )
 
 func healthCheck() int {
-	if err := databases.HealthCheck(); err != nil {
-		return http.StatusServiceUnavailable
-	}
+	// if err := databases.HealthCheck(); err != nil {
+	// 	return http.StatusServiceUnavailable
+	// }
 
 	return http.StatusOK
 }

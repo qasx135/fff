@@ -36,9 +36,23 @@ config:
       static_configs:
         - targets: ["catalog-db-exporter-service:9187"]
 
+    - job_name: "watch-db-exporter"
+      static_configs:
+        - targets: ["watch-db-exporter-service:9187"]
+
     - job_name: "auth-service"
       static_configs:
         - targets: ["auth-service:8080"]
+      metrics_path: "/metrics"
+
+    - job_name: "catalog-service"
+      static_configs:
+        - targets: ["catalog-service:8080"]
+      metrics_path: "/metrics"
+
+    - job_name: "watch-service"
+      static_configs:
+        - targets: ["watch-service:8080"]
       metrics_path: "/metrics"
 
 probes:
