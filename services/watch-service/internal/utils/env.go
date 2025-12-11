@@ -8,11 +8,12 @@ import (
 )
 
 type Config struct {
-	JWTSecret     string
-	GelfEndpoint  string
-	ServerPort    string
-	PostgresqlDSN string
-	BrokerHost    string
+	JWTSecret      string
+	GelfEndpoint   string
+	ServerPort     string
+	PostgresqlDSN  string
+	BrokerHost     string
+	JaegerEndpoint string
 }
 
 const (
@@ -21,6 +22,7 @@ const (
 	SERVER_PORT       = ":8080"
 	POSTGRESQL_DSN    = "host=watch-db-postgresql user=watch_user password=watch_pass dbname=watch_db port=5432 sslmode=disable"
 	KAFKA_BROKER_HOST = "kafka:9092"
+	JAEGER_ENDPORINT  = "jaeger-service:4317"
 )
 
 func Load() *Config {
@@ -29,11 +31,12 @@ func Load() *Config {
 	}
 
 	return &Config{
-		JWTSecret:     getEnv("JWT_SECRET", JWT_SECRET),
-		PostgresqlDSN: getEnv("DB_DSN", POSTGRESQL_DSN),
-		GelfEndpoint:  getEnv("GELF_ENDPOINT", GELF_ENDPOINT),
-		ServerPort:    getEnv("SERVER_PORT", SERVER_PORT),
-		BrokerHost:    getEnv("KAFKA_BROKER_HOST", KAFKA_BROKER_HOST),
+		JWTSecret:      getEnv("JWT_SECRET", JWT_SECRET),
+		PostgresqlDSN:  getEnv("DB_DSN", POSTGRESQL_DSN),
+		GelfEndpoint:   getEnv("GELF_ENDPOINT", GELF_ENDPOINT),
+		ServerPort:     getEnv("SERVER_PORT", SERVER_PORT),
+		BrokerHost:     getEnv("KAFKA_BROKER_HOST", KAFKA_BROKER_HOST),
+		JaegerEndpoint: getEnv("JAEGER_ENDPOINT", JAEGER_ENDPORINT),
 	}
 }
 

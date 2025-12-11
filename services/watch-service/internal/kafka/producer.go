@@ -13,7 +13,7 @@ var (
 func InitKafkaProducer(brokerHost string) {
 	writer = kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{brokerHost},
-		Topic:   "anime-watcher"})
+		Topic:   "anime-watch"})
 }
 
 func WriteMessage(msg *kafka.Message) error {

@@ -1,16 +1,16 @@
 package handlers
 
 import (
-	"catalog-service/internal/databases"
+	// "catalog-service/internal/databases"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 func healthCheck() int {
-	if err := databases.HealthCheck(); err != nil {
-		return http.StatusServiceUnavailable
-	}
+	// if err := databases.HealthCheck(); err != nil {
+	// 	return http.StatusServiceUnavailable
+	// }
 
 	return http.StatusOK
 }

@@ -26,6 +26,8 @@ spec:
               value: "{{ .Values.env.REDIS_ADDR }}"
             - name: GELF_ENDPOINT
               value: "{{ .Values.env.GELF_ENDPOINT }}"
+            - name: JAEGER_ENDPOINT
+              value: "{{ .Values.env.JAEGER_ENDPOINT }}"
             - name: GIN_MODE
               value: "release"
           resources: {{- toYaml .Values.resources | nindent 12 }}

@@ -1,0 +1,74 @@
+replicaCount: 1
+
+image:
+  repository: grafana/grafana
+  tag: "10.1.0"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  limits:
+    cpu: 300m
+    memory: 512Mi
+  requests:
+    cpu: 150m
+    memory: 128Mi
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 1Gi
+
+admin:
+  username: admin
+  password: admin123
+
+datasources:
+  prometheus:
+    name: Prometheus
+    type: prometheus
+    url: http://prometheus-service:9090
+    access: proxy
+    isDefault: true
+
+dashboards:
+  enabled: true
+  postgresql:
+    id: 9628
+    title: "PostgreSQL Database"
+  springboot:
+    id: 6756
+    title: "Spring Boot Statistics"
+
+probes:
+  liveness:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    initialDelaySeconds: 30
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 3
+  startup:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 1
+  targetCPUUtilizationPercentage: 60
+  targetMemoryUtilizationPercentage: 60
+
+env:
+  GF_SECURITY_ADMIN_USER: admin
+  GF_SECURITY_ADMIN_PASSWORD: admin123
+  GF_USERS_ALLOW_SIGN_UP: false
+  GF_INSTALL_PLUGINS: ""

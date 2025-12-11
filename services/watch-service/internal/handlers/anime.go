@@ -1,9 +1,12 @@
 package handlers
 
 import (
+	internal_kafka "watch-service/internal/kafka"
 	"watch-service/internal/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	"github.com/segmentio/kafka-go"
 	"gorm.io/gorm"
 )
 
@@ -34,11 +37,17 @@ func (h *WatchHandler) WatchHandler(c *gin.Context) {
 		return
 	}
 
-	if event.UserID == "" || event.AnimeID == 0 {
+	if event.UserID == "" || event.AnimeID != uuid.Nil {
 		c.JSON(400, gin.H{"error": "user_id and anime_id required"})
 		return
 	}
 
 	h.db.Create(&event)
+
+	internal_kafka.WriteMessage(&kafka.Message{
+		Key:   []byte(event.AnimeID.String()),
+		Value: []byte(event.UpdatedAt.String()),
+	})
+
 	c.JSON(201, event)
 }

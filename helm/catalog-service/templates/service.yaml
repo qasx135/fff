@@ -9,5 +9,5 @@ spec:
     app: catalog-service
   ports:
     - protocol: TCP
-      port: {{ .Values.service.port }}
-      targetPort: 8080
+      port: {{ .Values.service.main.port }}
+      targetPort: {{ .Values.service.main.targetPort }}

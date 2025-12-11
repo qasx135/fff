@@ -4,12 +4,12 @@ import (
 	"net/http"
 	"strings"
 
-	"watch-service/internal/utils"
+	"catalog-service/internal/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
-func AuthMiddleware() gin.HandlerFunc {
+func AuthMiddleware(jwtManager *utils.JwtManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
@@ -25,39 +25,15 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		userID, role, err := utils.ValidateJWT(tokenString)
+		userID, err := jwtManager.ValidateJWT(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return
 		}
 
-		c.Set("userID", userID)
-		c.Set("role", role)
+		c.Set("username", userID)
 		c.Next()
 	}
 }
 
-func AdminMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		role, exists := c.Get("role")
-		if !exists || role != "admin" {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Admin access required"})
-			c.Abort()
-			return
-		}
-		c.Next()
-	}
-}
-
-func EmployerMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		role, exists := c.Get("role")
-		if !exists || (role != "employer" && role != "admin") {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Employer or admin access required"})
-			c.Abort()
-			return
-		}
-		c.Next()
-	}
-}

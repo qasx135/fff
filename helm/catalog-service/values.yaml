@@ -1,9 +1,13 @@
-replicaCount: 2
+replicaCount: 1
 image:
-  repository: catalog-service
-  tag: "latest"
+  repository: kostuwan/catalog-service
+  tag: v4
+
 service:
-  port: 8080
+  main:
+    port: 8080
+    targetPort: 8080
+
 resources:
   requests:
     memory: "128Mi"
@@ -12,13 +16,24 @@ resources:
     memory: "256Mi"
     cpu: "200m"
 autoscaling:
-  enabled: true
-  minReplicas: 2
+  enabled: false
+  minReplicas: 1
   maxReplicas: 5
   targetCPUUtilizationPercentage: 60
 env:
   DB_DSN: "host=catalog-db-postgresql user=catalog_user password=catalog_pass dbname=catalog_db port=5432 sslmode=disable"
+  JWT_SECRET: "anime-platform-dev-secret-12345"
+  REDIS_ADDR: "redis-master:6379"
+  GELF_ENDPOINT: "graylog-service:12201"
+  JAEGER_ENDPOINT: "jaeger-service:4317"
+  KAFKA_ENDPOINT: "kafka-service:9092"
 probes:
-  liveness: { path: /healthz, initialDelaySeconds: 5 }
-  readiness: { path: /ready, initialDelaySeconds: 3 }
-  startup: { path: /startup, initialDelaySeconds: 10 }
+  liveness:
+    path: /healthz
+    initialDelaySeconds: 5
+  readiness:
+    path: /ready
+    initialDelaySeconds: 3
+  startup:
+    path: /startup
+    initialDelaySeconds: 10

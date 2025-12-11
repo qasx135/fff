@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: kostuwan/auth-service
-  tag: v10
+  tag: v11
 
 service:
   main:
@@ -27,6 +27,7 @@ env:
   JWT_SECRET: "anime-platform-dev-secret-12345"
   REDIS_ADDR: "redis-master:6379"
   GELF_ENDPOINT: "graylog-service:12201"
+  JAEGER_ENDPOINT: "jaeger-service:4317"
 
 probes:
   liveness:

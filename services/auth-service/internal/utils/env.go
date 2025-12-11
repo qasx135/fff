@@ -14,6 +14,7 @@ type Config struct {
 	GelfEndpoint    string
 	AccessTokenExp  time.Duration
 	RefreshTokenExp time.Duration
+	JaegerEndpoint  string
 	ServerPort      string
 }
 
@@ -23,6 +24,7 @@ const (
 	GELF_ENDPOINT     = "graylog:12201"
 	ACCESS_TOKEN_EXP  = 15 * time.Minute
 	REFRESH_TOKEN_EXP = 24 * 7 * time.Hour
+	JAEGER_ENDOPOINT  = "jaeger-service:4317"
 	SERVER_PORT       = ":8080"
 )
 
@@ -37,6 +39,7 @@ func Load() *Config {
 		GelfEndpoint:    getEnv("GELF_ENDPOINT", GELF_ENDPOINT),
 		AccessTokenExp:  getEnvAsDuration("ACCESS_TOKEN_EXP", ACCESS_TOKEN_EXP),
 		RefreshTokenExp: getEnvAsDuration("REFRESH_TOKEN_EXP", REFRESH_TOKEN_EXP),
+		JaegerEndpoint:  getEnv("JAEGER_ENDPOINT", JAEGER_ENDOPOINT),
 		ServerPort:      getEnv("SERVER_PORT", SERVER_PORT),
 	}
 }

@@ -18,7 +18,10 @@ func InitDB(dsn string) {
 	if err != nil {
 		log.Fatal("Не удалось подключиться к БД:", err)
 	}
-	DB.AutoMigrate(&models.Anime{})
+	err = DB.AutoMigrate(&models.Anime{})
+	if err != nil {
+		log.Fatal("Не удалось мигрировать схемы:", err)
+	}
 	DB.FirstOrCreate(&models.Anime{}, models.Anime{
 		Title:      "Cowboy Bebop",
 		Genre:      "Sci-Fi",

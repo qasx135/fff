@@ -1,10 +1,13 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+)
 
 type WatchEvent struct {
 	gorm.Model
-	UserID  string `json:"user_id"`
-	AnimeID uint   `json:"anime_id"`
-	Episode int    `json:"episode"`
+	UserID  string    `json:"user_id"`
+	AnimeID uuid.UUID `gorm:"type:uuid" json:"anime_id"`
+	Episode int       `json:"episode"`
 }

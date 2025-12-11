@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/redis/go-redis/extra/redisotel/v9"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -14,8 +15,14 @@ var (
 
 const redisPrefix = "refresh:"
 
+
 func InitRedis(redisAddr string) {
 	redisClient = redis.NewClient(&redis.Options{Addr: redisAddr})
+	
+	if err := redisotel.InstrumentTracing(redisClient); err != nil {
+		log.Fatalf("redis tracing init failed: %v", err)
+	}
+	
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	if err := redisClient.Ping(ctx).Err(); err != nil {
