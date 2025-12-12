@@ -6,6 +6,8 @@ metadata:
     app: watch-service
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: watch-service
@@ -28,7 +30,7 @@ spec:
               value: "{{ .Values.env.JAEGER_ENDPOINT }}"
             - name: DB_DSN
               value: "{{ .Values.env.DB_DSN }}"
-            - name: KAFKA_ENDPOINT
+            - name: KAFKA_BROKER_HOST
               value: "{{ .Values.env.KAFKA_ENDPOINT }}"
             - name: GIN_MODE
               value: "release"

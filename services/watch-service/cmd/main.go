@@ -4,15 +4,15 @@ import (
 	"log"
 	"watch-service/internal/databases"
 	"watch-service/internal/handlers"
+	"watch-service/internal/kafka"
 	"watch-service/internal/logger"
 	"watch-service/internal/middlewares"
 	"watch-service/internal/telemetry"
 	"watch-service/internal/utils"
 
 	"github.com/gin-gonic/gin"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 )
 
 func main() {
@@ -24,6 +24,8 @@ func main() {
 	shutdown := telemetry.InitTracer("watch-service", config.JaegerEndpoint)
 	defer shutdown()
 
+	kafka.InitKafkaProducer(config.BrokerHost)
+	defer kafka.Close()
 	databases.InitDB(config.PostgresqlDSN)
 	watchHandler := &handlers.WatchHandler{}
 	watchHandler.SetDB(databases.DB)

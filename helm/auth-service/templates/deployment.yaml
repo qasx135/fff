@@ -6,6 +6,8 @@ metadata:
     app: auth-service
 spec:
   replicas: {{ .Values.replicaCount }}
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: auth-service
