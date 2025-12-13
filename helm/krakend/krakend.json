@@ -1,17 +1,25 @@
 {
-  "$schema": "https://www.krakend.io/schema/v3.json",
   "version": 3,
   "name": "Anime API Gateway",
-  "port": 8088,
+  "port": 8080,
+  "timeout": "3000ms",
+
+  "extra_config": {
+    "telemetry/logging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]"
+    }
+  },
+
   "endpoints": [
     {
       "endpoint": "/auth/login",
       "method": "POST",
       "backend": [
         {
-          "url_pattern": "/login",
+          "method": "POST",
           "host": ["http://auth-service:8080"],
-          "method": "POST"
+          "url_pattern": "/login"
         }
       ]
     },
@@ -20,42 +28,54 @@
       "method": "POST",
       "backend": [
         {
-          "url_pattern": "/refresh",
           "method": "POST",
-          "host": ["http://auth-service:8080"]
+          "host": ["http://auth-service:8080"],
+          "url_pattern": "/refresh"
+        }
+      ]
+    },
+
+    {
+      "endpoint": "/catalog/anime",
+      "method": "GET",
+      "backend": [
+        {
+          "method": "GET",
+          "host": ["http://catalog-service:8080"],
+          "url_pattern": "/api/anime"
         }
       ]
     },
     {
-      "endpoint": "/catalog",
+      "endpoint": "/catalog/anime/{id}",
       "method": "GET",
       "backend": [
         {
-          "url_pattern": "/api/anime",
           "method": "GET",
-          "host": ["http://catalog-service:8080"]
+          "host": ["http://catalog-service:8080"],
+          "url_pattern": "/api/anime/{id}"
         }
       ]
     },
-    {
-      "endpoint": "/catalog/{id}",
-      "method": "GET",
-      "backend": [
-        {
-          "url_pattern": "/api/anime/{id}",
-          "method": "GET",
-          "host": ["http://catalog-service:8080"]
-        }
-      ]
-    },
+
     {
       "endpoint": "/watch",
       "method": "POST",
       "backend": [
         {
-          "url_pattern": "/api/watch",
-          "method": "POST",
-          "host": ["http://catalog-service:8080"]
+          "method": "GET",
+          "host": ["http://watch-service:8080"],
+          "url_pattern": "/api/watch"
+        }
+      ]
+    },
+    {
+      "endpoint": "/watch/history/{user_id}",
+      "method": "GET",
+      "backend": [
+        {
+          "host": ["http://watch-service:8080"],
+          "url_pattern": "/api/history/{user_id}"
         }
       ]
     }

@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
-              containerPort: 8088
+              containerPort: {{ .Values.service.port }}
               protocol: TCP
           volumeMounts:
             - name: krakend-config
