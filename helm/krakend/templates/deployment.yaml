@@ -23,6 +23,8 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+          command: ["/usr/bin/krakend"]
+          args: ["run", "-d", "-c", "/etc/krakend/krakend.json", "-p", "8080"]
           volumeMounts:
             - name: krakend-config
               mountPath: /etc/krakend

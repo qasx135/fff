@@ -4,17 +4,14 @@ set -e
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$PROJECT_ROOT"
 
-echo "🚀 [1/8] Запуск Minikube..."
 minikube start --cpus=4 --driver=docker
 minikube addons enable ingress
-minikube addons enabe ingress-dns
+minikube addons enable ingress-dns
 minikube addons enable metrics-server
 minikube addons enable dashboard
-minikube addons enable default-storage-class
 minikube addons enable storage-provisioner
 eval $(minikube docker-env)
 
-echo "📦 [3/8] Установка внешних зависимостей..."
 helm upgrade --install redis oci://registry-1.docker.io/bitnamicharts/redis --set auth.enabled=false \
     --set master.persistence.size=1Gi \
     --set replica.persistence.size=1Gi
@@ -41,14 +38,17 @@ helm upgrade --install grafana ./helm/grafana
 
 helm upgrade --install jaeger ./helm/jaeger
 
-echo "⛵ [7/8] Сборка и установка ваших сервисов..."
 docker build -t kostuwan/auth-service:latest ./services/auth-service
 docker build -t kostuwan/catalog-service:latest ./services/catalog-service
 docker build -t kostuwan/watch-service:latest ./services/watch-service
 
-docker push kostuwan/auth-service:latest
-docker push kostuwan/catalog-service:latest
-docker push kostuwan/watch-service:latest
+
+docker build -t qasx135/krakend:latest ./infra/krakend
+# docker push qasx135/krakend:latest
+
+# docker push kostuwan/auth-service:latest
+# docker push kostuwan/catalog-service:latest
+# docker push kostuwan/watch-service:latest
 
 helm upgrade --install auth-service ./helm/auth-service
 kubectl wait --for=condition=ready pod -l app=auth-servoce --timeout=100s
