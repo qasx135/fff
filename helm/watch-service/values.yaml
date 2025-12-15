@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: kostuwan/watch-service
-  tag: v9
+  tag: latest
 
 service:
   main:

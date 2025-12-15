@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
   repository: kostuwan/catalog-service
-  tag: v7
+  tag: latest
 
 service:
   main:
