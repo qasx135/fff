@@ -1,4 +1,5 @@
 {
+  "$schema": "https://www.krakend.io/schema/v2.12/krakend.json",
   "version": 3,
   "name": "Anime API Gateway",
   "port": 8080,
@@ -16,6 +17,7 @@
       "endpoint": "/auth/login",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "POST",
@@ -28,6 +30,7 @@
       "endpoint": "/auth/refresh",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "POST",
@@ -40,6 +43,7 @@
       "endpoint": "/catalog/anime",
       "method": "GET",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "GET",
@@ -52,6 +56,7 @@
       "endpoint": "/catalog/anime/{id}",
       "method": "GET",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "GET",
@@ -64,6 +69,7 @@
       "endpoint": "/watch",
       "method": "POST",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "POST",
@@ -76,6 +82,7 @@
       "endpoint": "/watch/history/{user_id}",
       "method": "GET",
       "output_encoding": "no-op",
+      "input_headers": ["*"],
       "backend": [
         {
           "method": "GET",

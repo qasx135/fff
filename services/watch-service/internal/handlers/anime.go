@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"log"
+	"errors"
 	"time"
 	internal_kafka "watch-service/internal/kafka"
 	"watch-service/internal/models"
@@ -9,6 +9,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/segmentio/kafka-go"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
 	"gorm.io/gorm"
 )
 
@@ -39,31 +42,63 @@ func (h *WatchHandler) GetHistory(c *gin.Context) {
 }
 
 func (h *WatchHandler) WatchHandler(c *gin.Context) {
+	ctx := c.Request.Context()
+	tracer := otel.Tracer("watch-handler")
+
+	ctx, span := tracer.Start(ctx, "WatchHandler")
+	defer span.End()
+
 	var dto WatchEventDTO
 	if err := c.ShouldBindJSON(&dto); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
+	span.SetAttributes(
+		attribute.String("user.id", dto.UserID),
+		attribute.String("anime.id", dto.AnimeID.String()),
+		attribute.Int("episode", dto.Episode),
+	)
+
 	if dto.UserID == "" || dto.AnimeID == uuid.Nil {
-		c.JSON(400, gin.H{"error": "user_id and anime_id required"})
+		err := errors.New("user_id and anime_id required")
+		span.RecordError(err)
+		span.SetStatus(codes.Error, err.Error())
+		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-
+	dbCtx, dbSpan := tracer.Start(ctx, "db.insert_watch_event")
 	event := models.WatchEvent{
 		UserID:  dto.UserID,
 		AnimeID: dto.AnimeID,
 		Episode: dto.Episode,
 	}
 
-	h.db.Create(&event)
+	if err := h.db.WithContext(dbCtx).Create(&event).Error; err != nil {
+		dbSpan.RecordError(err)
+		dbSpan.SetStatus(codes.Error, "db error")
+		dbSpan.End()
 
-	if err := internal_kafka.WriteMessage(kafka.Message{
-		Key:   []byte(event.AnimeID.String()),
-		Value: []byte(event.UpdatedAt.Format(time.RFC3339)),
-	}); err != nil {
-		log.Printf("Error while sending message: %s", err)
+		c.JSON(500, gin.H{"error": "db error"})
+		return
 	}
+	dbSpan.End()
+
+	kafkaCtx, kafkaSpan := tracer.Start(ctx, "kafka.produce_watch_event")
+
+	err := internal_kafka.WriteMessage(
+		kafkaCtx,
+		kafka.Message{
+			Key:   []byte(event.AnimeID.String()),
+			Value: []byte(event.UpdatedAt.Format(time.RFC3339)),
+		},
+	)
+
+	if err != nil {
+		kafkaSpan.RecordError(err)
+		kafkaSpan.SetStatus(codes.Error, "kafka produce failed")
+	}
+	kafkaSpan.End()
 
 	c.JSON(201, event)
 }

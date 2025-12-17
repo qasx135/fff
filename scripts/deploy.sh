@@ -9,7 +9,6 @@ minikube addons enable ingress
 minikube addons enable ingress-dns
 minikube addons enable metrics-server
 minikube addons enable dashboard
-minikube addons enable storage-provisioner
 eval $(minikube docker-env)
 
 helm upgrade --install redis oci://registry-1.docker.io/bitnamicharts/redis --set auth.enabled=false \

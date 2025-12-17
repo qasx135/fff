@@ -16,8 +16,8 @@ func InitKafkaProducer(brokerHost string) {
 		Topic:   "anime-watch"})
 }
 
-func WriteMessage(msg kafka.Message) error {
-	return writer.WriteMessages(context.Background(), msg)
+func WriteMessage(ctx context.Context, msg kafka.Message) error {
+	return writer.WriteMessages(ctx, msg)
 }
 
 func Close() {
