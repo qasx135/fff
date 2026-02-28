@@ -14,10 +14,11 @@ primary:
     limits:
       memory: "512Mi"
       cpu: "200m"
-  initdbScripts:
-    create_monitoring_user.sql: |
-      CREATE USER prometheus WITH PASSWORD 'prom_pass';
-      GRANT pg_monitor TO prometheus;
+  initdb:
+    scripts:
+      create_monitoring_user.sql: |
+        CREATE USER prometheus WITH PASSWORD 'prom_pass';
+        GRANT pg_monitor TO prometheus;
   extendedConfiguration: |
     max_connections = 100
   metrics:

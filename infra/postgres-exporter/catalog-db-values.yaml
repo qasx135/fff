@@ -1,0 +1,24 @@
+replicaCount: 1
+
+image:
+  repository: prometheuscommunity/postgres-exporter
+  tag: "v0.18.1"
+  pullPolicy: IfNotPresent
+
+app:
+  name: catalog-db-exporter
+
+service:
+  type: ClusterIP
+  port: 9187
+
+resources:
+  limits:
+    cpu: 150m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+env:
+  DATA_SOURCE_NAME: "postgresql://prometheus:prom_pass@catalog-db-postgresql:5432/catalog_db?sslmode=disable"

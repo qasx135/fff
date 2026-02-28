@@ -1,0 +1,95 @@
+{
+  "$schema": "https://www.krakend.io/schema/v2.12/krakend.json",
+  "version": 3,
+  "name": "Anime API Gateway",
+  "port": 8080,
+  "timeout": "10s",
+
+  "extra_config": {
+    "telemetry/logging": {
+      "level": "INFO",
+      "prefix": "[KRAKEND]"
+    }
+  },
+
+  "endpoints": [
+    {
+      "endpoint": "/auth/login",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "POST",
+          "host": ["auth-service:8080"],
+          "url_pattern": "/login"
+        }
+      ]
+    },
+    {
+      "endpoint": "/auth/refresh",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "POST",
+          "host": ["auth-service:8080"],
+          "url_pattern": "/refresh"
+        }
+      ]
+    },
+    {
+      "endpoint": "/catalog/anime",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "GET",
+          "host": ["catalog-service:8080"],
+          "url_pattern": "/api/anime"
+        }
+      ]
+    },
+    {
+      "endpoint": "/catalog/anime/{id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "GET",
+          "host": ["catalog-service:8080"],
+          "url_pattern": "/api/anime/{id}"
+        }
+      ]
+    },
+    {
+      "endpoint": "/watch",
+      "method": "POST",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "POST",
+          "host": ["watch-service:8080"],
+          "url_pattern": "/api/watch"
+        }
+      ]
+    },
+    {
+      "endpoint": "/watch/history/{user_id}",
+      "method": "GET",
+      "output_encoding": "no-op",
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "method": "GET",
+          "host": ["watch-service:8080"],
+          "url_pattern": "/api/history/{user_id}"
+        }
+      ]
+    }
+  ]
+}

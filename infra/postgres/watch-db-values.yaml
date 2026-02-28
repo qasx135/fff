@@ -7,7 +7,13 @@ primary:
   persistence:
     enabled: true
     size: 2Gi
-  resources: { /* как выше */ }
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "200m"
   initdbScripts:
     create_monitoring_user.sql: |
       CREATE USER prometheus WITH PASSWORD 'prom_pass';
